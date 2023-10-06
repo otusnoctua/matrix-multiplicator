@@ -1,8 +1,8 @@
-﻿// openmp-matrix-multiplicator.h : Include file for standard system include files,
-// or project specific include files.
+﻿// This file contains headers used by the application.
 
 #pragma once
 
 #include <iostream>
-
-// TODO: Reference additional headers your program requires here.
+#include <vector>
+#include <math.h>
+#include <omp.h>
