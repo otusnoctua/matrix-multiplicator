@@ -3,6 +3,7 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <cstdlib>
 #include <math.h>
 #include <omp.h>
+#include <ctime>

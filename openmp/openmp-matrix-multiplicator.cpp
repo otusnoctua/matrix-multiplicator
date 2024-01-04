@@ -4,19 +4,28 @@
 
 using namespace std;
 
-// TODO: matrix -> struct
-// TODO: some exceptions for incorrect file/matrix format
-
-void parseFromCsv(string path) {
+int checkMultiCriteria(int r2, int c1) {
+	if (r2 != c1) {
+		cout << "Error: multiplication is not possible (rows(m2) != columns(m1))!";
+	}
+	return 0;
 }
 
-void generateRandom(int minValue, int maxValue, int r, int c) {
-	
+void generateRandomMatrices(int **matrix, int r, int c) {
+	for (int i = 0; i < r; i++) {
+		for (int j = 0; j < c; j++) {
+			matrix[i][j] = rand() % 11;
+		}
+	}
+	return;
 }
 
-void multiply(vector<vector<int>> m1, vector<vector<int>> m2, int r1, int r2, int c1, int c2) {
-	#ifdef _OPENMP
-	vector<vector<int>> result(r1, vector<int>(c2));
+void multiply(int **m1, int **m2, int **result, int r1, int r2, int c1, int c2) {
+	// Threads number is defined here
+	int threads = 2;
+	omp_set_num_threads(threads);
+	int i, j, k;
+#pragma omp parallel for shared(m1, m2, result) private(i, j, k)
 	for (int i = 0; i < r1; ++i) {
 		for (int j = 0; j < c2; ++j) {
 			int tmp = 0;
@@ -26,49 +35,49 @@ void multiply(vector<vector<int>> m1, vector<vector<int>> m2, int r1, int r2, in
 			result[i][j] = tmp;
 		}
 	}
-
-	for (int i = 0; i < r1; ++i) {
-		for (int j = 0; j < c2; ++j) {
-			cout << result[i][j] << " ";
-		}
-		cout << endl;
-	}
-	#endif
+	return;
 }
 
-int main()
+int main() {
+	srand(time(NULL));
 
-{
-	int r1, r2, c1, c2;
-	cin >> r1 >> c1 >> r2 >> c2;
-	vector<vector<int>> matrix1(r1, vector<int>(c1));
-	vector<vector<int>> matrix2(r2, vector<int>(c2));
+	int r1 = 1500;
+	int c1 = 750;
 
+	int r2 = 750;
+	int c2 = 1000;
+
+	checkMultiCriteria(r2, c1);
+
+	// Matrices initialization
+	int** matrix1;
+	int** matrix2;
+	int** result;
+
+	// Initial matrices memory allocation
+	matrix1 = (int**)malloc(sizeof(int*) * r1);
 	for (int i = 0; i < r1; i++) {
-		for (int j = 0; j < c1; j++) {
-			cin >> matrix1[i][j];
-		}
+		matrix1[i] = (int*)malloc(sizeof(int) * c1);
 	}
+	matrix2 = (int**)malloc(sizeof(int*) * r2);
 	for (int i = 0; i < r2; i++) {
-		for (int j = 0; j < c2; j++) {
-			cin >> matrix2[i][j];
-		}
+		matrix2[i] = (int*)malloc(sizeof(int) * c2);
 	}
 
-	/*for (int i = 0; i < r1; i++) {
-		for (int j = 0; j < c1; j++) {
-			cout << matrix1[i][j] << " ";
-		}
-		cout << endl;
-	}*/
+	// Result matrix memory allocation
+	result = (int**)malloc(sizeof(int*) * r1);
+	for (int i = 0; i < r1; i++) {
+		result[i] = (int*)malloc(sizeof(int) * c2);
+	}
 
-	multiply(matrix1, matrix2, r1, r2, c1, c2);
-
+	generateRandomMatrices(matrix1, r1, c1);
+	generateRandomMatrices(matrix2, r2, c2);
 	
-	cout << "Hello CMake." << endl;
+	clock_t start = clock();
+	multiply(matrix1, matrix2, result, r1, r2, c1, c2);
+	clock_t end = clock();
+
+	printf("Multiplication time: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
+
 	return 0;
-	
 }
-
-
-
