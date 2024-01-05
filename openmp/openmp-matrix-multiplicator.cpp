@@ -20,9 +20,7 @@ void generateRandomMatrices(int **matrix, int r, int c) {
 	return;
 }
 
-void multiply(int **m1, int **m2, int **result, int r1, int r2, int c1, int c2) {
-	// Threads number is defined here
-	int threads = 2;
+void multiply(int **m1, int **m2, int **result, int r1, int r2, int c1, int c2, int threads) {
 	omp_set_num_threads(threads);
 	int i, j, k;
 #pragma omp parallel for shared(m1, m2, result) private(i, j, k)
@@ -54,6 +52,9 @@ int main() {
 	int** matrix2;
 	int** result;
 
+	// Threads number
+	int threads = 2;
+
 	// Initial matrices memory allocation
 	matrix1 = (int**)malloc(sizeof(int*) * r1);
 	for (int i = 0; i < r1; i++) {
@@ -74,7 +75,7 @@ int main() {
 	generateRandomMatrices(matrix2, r2, c2);
 	
 	clock_t start = clock();
-	multiply(matrix1, matrix2, result, r1, r2, c1, c2);
+	multiply(matrix1, matrix2, result, r1, r2, c1, c2, threads);
 	clock_t end = clock();
 
 	printf("Multiplication time: %f\n", (double)(end - start) / CLOCKS_PER_SEC);
