@@ -1,6 +1,10 @@
-﻿// This is the application entry point.
+﻿#pragma once
 
-#include "openmp-matrix-multiplicator.h"
+#include <iostream>
+#include <cstdlib>
+#include <math.h>
+#include <omp.h>
+#include <ctime>
 
 using namespace std;
 
